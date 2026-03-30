@@ -1,103 +1,91 @@
 # Portfolio Risk Analysis (R)
 
 ## Overview
-This project focuses on analyzing an equal-weight stock portfolio using R, with emphasis on risk measurement and performance evaluation. The workflow includes historical data collection, return calculation, portfolio construction, risk metric computation, and visualization of key performance indicators.  
+This project is a basic portfolio risk analysis built in R， using three large-cap US stocks (`AAPL`, `MSFT`, `GOOG`) to form an equal-weight portfolio and comparing it with `SPY` as a benchmark. The main goal is to understand how the portfolio performs in terms of return, volatility, drawdown, downside risk, and market sensitivity.
 
 ## Dataset
-- Source: Yahoo Finance via `quantmod`
-- Period: From January 1, 2020
-- Tickers: AAPL, MSFT, GOOG
+- Stocks: `AAPL`, `MSFT`, `GOOG`
+- Benchmark: `SPY`
+- Start date: `2020-01-01`
+- Portfolio weights: equal weight (1/3 each)
+
+Data is retrieved using the `quantmod` package, based on adjusted closing prices.
 
 ## Project Objectives
-The project focuses on three main things:
-
-- Measure the risk and return of each stock individually
-- Build an equal-weight portfolio and evaluate its performance
-- Compare the portfolio with the market benchmark using beta and alpha
-
-The idea was not to build something overly complicated, but to go through the core risk metrics that are commonly used in portfolio and risk analysis.
+- Build a simple equity portfolio and evaluate its performance
+- Compare portfolio performance against a market benchmark
+- Analyze both return and risk from multiple perspectives
+- Apply commonly used risk metrics in practice
+- Present results in a clear and interpretable way
 
 ## Main steps
-### 1. Data Collection
-Historical price data for AAPL, MSFT, GOOG, and SPY were downloaded starting from 2020-01-01 using `getSymbols()`.
+### 1. Data Processing
+- Download and clean historical price data
+- Align time series and calculate daily returns
 
-### 2. Return Calculation
-Daily returns were calculated from adjusted close prices to account for corporate actions such as dividends and stock splits, and missing values were removed.
-
-### 3. Individual metrics
-For each stock, the following metrics were calculated:
-
-- Annualized return
-- Annualized volatility
-- Historical VaR (95%)
-- Historical CVaR (95%)
-
-### 4. Portfolio Analysis
-An equal-weight portfolio was created with the following allocation:
+### 2. Portfolio Analysis
+Construct equal-weight portfolio using `Return.portfolio()` with the following allocation:
 
 - AAPL: 33.3%
 - MSFT: 33.3%
 - GOOG: 33.3%
 
-For the portfolio, the following metrics were calculated:
-- Annualized return
-- Annualized volatility
-- VaR (95%)
-- CVaR (95%)
-- Sharpe ratio
-- Maximum drawdown
+**Risk & Performance Metrics**
+- Annualized return, volatility, Sharpe ratio
+- Drawdown analysis
+- Downside risk (VaR, CVaR)
+- CAPM regression (alpha, beta)
 
-### 5. Beta and Alpha
-A simple linear regression of portfolio returns against SPY returns was run to estimate:
-
-- Daily alpha
-- Annualized alpha
-- Beta
-
-This helps show how sensitive the portfolio is to market movements.
-
-### 6. Visualization
-The project includes the following charts:
-
-Risk vs. return scatter plot
-Cumulative portfolio return
-Portfolio return distribution
-20-day rolling volatility
-
-These charts make it easier to understand the relationship between return, risk, and drawdown.
+### 3. Visualization
+- Return distribution 
+- Cumulative return (Portfolio vs SPY)
+- Drawdown comparison
+- Monthly return comparison
+- 20-day rolling volatility
 
 ## Results
-### Individual Stock Metrics
+### Annualized Performance
 
-| Ticker | Annualized Return | Annualized Volatility | VaR (95%) | CVaR (95%) |
-|--------|-------------------|----------------------|-----------|------------|
-| AAPL   | 0.2197            | 0.3157               | 0.0307    | 0.0444     |
-| MSFT   | 0.1470            | 0.2971               | 0.0277    | 0.0420     |
-| GOOG   | 0.2518            | 0.3202               | 0.0305    | 0.0453     |
+| Metric | Portfolio | SPY |
+|---|---:|---:|
+| Annualized Return | 0.2103 | 0.1301 |
+| Annualized Std Dev | 0.2732 | 0.2051 |
+| Annualized Sharpe Ratio | 0.7696 | 0.6346 |
 
-### Portfolio Metrics
+The portfolio achieved higher return and higher Sharpe ratio compared to SPY, but also showed higher volatility.
 
-| Metric | Value |
-|--------|-------|
-| Annualized Return | 0.2102 |
-| Annualized Volatility | 0.2733 |
-| VaR (95%) | 0.0254 |
-| CVaR (95%) | 0.0388 |
-| Sharpe Ratio | 0.7692 |
-| Maximum Drawdown | 0.3517 |
+### Drawdown
 
-### Market Exposure
+The worst drawdown in the portfolio was:
 
-- Daily alpha: 0.0002475  
-- Annualized alpha: 0.06237  
-- Beta: 1.1576  
+- **Depth:** -35.17%
+- **From:** 2021-12-28
+- **Trough:** 2023-01-05
+- **Recovery:** 2023-07-28
 
-**Observations:**
+This shows the portfolio experienced significant stress periods and slow recovery, which is important from a risk perspective. Other large drawdowns also happened during the COVID period and later market corrections.
 
-- The portfolio exhibits moderate risk-adjusted returns.
-- Maximum drawdown indicates periods of significant downside risk.
-- Beta above 1 implies higher sensitivity to market movements than the benchmark.
-- Rolling volatility and return distribution highlight time-varying portfolio risk.
+### Downside Risk
+
+- VaR (95%): -2.54% (vs -1.79% for SPY)
+- Expected Shortfall (95%): -3.88% (vs -3.08% for SPY)
+
+The portfolio has heavier downside risk compared to the benchmark, meaning larger potential losses in extreme scenarios.
+
+### CAPM 
+
+- **Annualized Alpha:** 0.0621
+- **Beta:** 1.16
+
+The beta above 1 means the portfolio moved more aggressively than the market.  
+The positive alpha suggests the portfolio performed better than what would be expected.
+
+## Key Takeaways
+
+- Higher returns were achieved at the cost of higher volatility and downside risk
+- Benchmark comparison is necessary to evaluate whether performance is meaningful
+- Drawdown analysis provides a more realistic view of risk than volatility alone
+- Beta and VaR help explain how the portfolio behaves under market stress
 
 ## How to Reproduce
 - R (latest version recommended)
@@ -113,13 +101,17 @@ These charts make it easier to understand the relationship between return, risk,
 2. Open `Portfolio_Risk.R` in RStudio.
 3. Install required packages: `install.packages(c("quantmod", "PerformanceAnalytics", "ggplot2","zoo"))`
 4. Run the script.
-5. The script will:
+5. The script will output key risk metrics and generate several plots.
 
-- download historical price data
-- calculate daily returns
-- construct an equal-weight portfolio
-- compute risk metrics
-- generate charts for volatility, cumulative return, and return distribution
+## Outputs
+The project produces:
+
+Portfolio vs benchmark return comparison
+Risk and performance summary tables
+Drawdown analysis
+Downside risk metrics
+CAPM alpha and beta
+Rolling volatility over time
 
 ## Future Work
 - Extending the backtesting period
