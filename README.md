@@ -8,52 +8,89 @@ This project focuses on analyzing an equal-weight stock portfolio using R, with 
 - Period: From January 1, 2020
 - Tickers: AAPL, MSFT, GOOG
 
-## Tasks
-- Collect historical stock and market data using `quantmod`.
-- Calculate daily returns based on adjusted closing prices.
-- Construct an equal-weight portfolio.
-- Compute risk and performance metrics including Sharpe ratio, maximum drawdown, CVaR, alpha, and beta.
-- Perform market comparison and regression analysis.
-- Visualize rolling volatility, cumulative returns, and return distribution.
+## Project Objectives
+The project focuses on three main things:
+
+- Measure the risk and return of each stock individually
+- Build an equal-weight portfolio and evaluate its performance
+- Compare the portfolio with the market benchmark using beta and alpha
+
+The idea was not to build something overly complicated, but to go through the core risk metrics that are commonly used in portfolio and risk analysis.
 
 ## Main steps
 ### 1. Data Collection
 Historical price data for AAPL, MSFT, GOOG, and SPY were downloaded starting from 2020-01-01 using `getSymbols()`.
 
 ### 2. Return Calculation
-Daily returns were calculated from adjusted closing prices to account for corporate actions such as dividends and stock splits.
+Daily returns were calculated from adjusted close prices to account for corporate actions such as dividends and stock splits, and missing values were removed.
 
-### 3. Portfolio Construction
+### 3. Individual metrics
+For each stock, the following metrics were calculated:
+
+- Annualized return
+- Annualized volatility
+- Historical VaR (95%)
+- Historical CVaR (95%)
+
+### 4. Portfolio Analysis
 An equal-weight portfolio was created with the following allocation:
 
 - AAPL: 33.3%
 - MSFT: 33.3%
 - GOOG: 33.3%
 
-### 4. Risk and Performance Metrics
-Key metrics computed include:
+For the portfolio, the following metrics were calculated:
+- Annualized return
+- Annualized volatility
+- VaR (95%)
+- CVaR (95%)
+- Sharpe ratio
+- Maximum drawdown
 
-- Annualized Sharpe Ratio
-- Maximum Drawdown
-- Conditional Value at Risk (CVaR / Expected Shortfall)
-- Alpha (annualized)
-- Beta relative to SPY
+### 5. Beta and Alpha
+A simple linear regression of portfolio returns against SPY returns was run to estimate:
 
-### 5. Visualization
-Generated charts include:
+- Daily alpha
+- Annualized alpha
+- Beta
 
-- 20-day rolling volatility
-- Cumulative return curve
-- Daily return distribution histogram
+This helps show how sensitive the portfolio is to market movements.
+
+### 6. Visualization
+The project includes the following charts:
+
+Risk vs. return scatter plot
+Cumulative portfolio return
+Portfolio return distribution
+20-day rolling volatility
+
+These charts make it easier to understand the relationship between return, risk, and drawdown.
 
 ## Results
-Based on the analysis period, the portfolio metrics are as follows:
+### Individual Stock Metrics
 
-- **Annualized Sharpe Ratio**: 0.7692
-- **Maximum Drawdown**: 0.3517
-- **95% CVaR**: -0.0367
-- **Annualized Alpha**: 0.0624
-- **Beta**: 1.1576
+| Ticker | Annualized Return | Annualized Volatility | VaR (95%) | CVaR (95%) |
+|--------|-------------------|----------------------|-----------|------------|
+| AAPL   | 0.2197            | 0.3157               | 0.0307    | 0.0444     |
+| MSFT   | 0.1470            | 0.2971               | 0.0277    | 0.0420     |
+| GOOG   | 0.2518            | 0.3202               | 0.0305    | 0.0453     |
+
+### Portfolio Metrics
+
+| Metric | Value |
+|--------|-------|
+| Annualized Return | 0.2102 |
+| Annualized Volatility | 0.2733 |
+| VaR (95%) | 0.0254 |
+| CVaR (95%) | 0.0388 |
+| Sharpe Ratio | 0.7692 |
+| Maximum Drawdown | 0.3517 |
+
+### Market Exposure
+
+- Daily alpha: 0.0002475  
+- Annualized alpha: 0.06237  
+- Beta: 1.1576  
 
 **Observations:**
 
@@ -75,12 +112,18 @@ Based on the analysis period, the portfolio metrics are as follows:
 1. Clone this repository.
 2. Open `Portfolio_Risk.R` in RStudio.
 3. Install required packages: `install.packages(c("quantmod", "PerformanceAnalytics", "ggplot2","zoo"))`
-4. Run the script. 
+4. Run the script.
+5. The script will:
+
+- download historical price data
+- calculate daily returns
+- construct an equal-weight portfolio
+- compute risk metrics
+- generate charts for volatility, cumulative return, and return distribution
 
 ## Future Work
 - Extending the backtesting period
 - Including additional stocks and alternative weighting schemes
-- Calculating additional risk metrics such as VaR and Sortino Ratio
 - Portfolio optimization and risk contribution analysis
 - Benchmarking against multiple market indices
 - Convert to Python version
